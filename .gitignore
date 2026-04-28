@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+backend/.env
+backend/chroma_db/
+backend/faiss_db/
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+.webui_secret_key
