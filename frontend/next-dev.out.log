@@ -1,0 +1,22 @@
+
+> vllm-rag-frontend@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://10.125.43.80:3000
+
+ ✓ Starting...
+ ✓ Ready in 1581ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.3s (573 modules)
+ GET / 200 in 3349ms
+ GET / 200 in 74ms
+ GET / 200 in 65ms
+ ✓ Compiled in 306ms (573 modules)
+ GET / 200 in 162ms
+ GET / 200 in 124ms
+ ✓ Compiled in 84ms (246 modules)
+ GET / 200 in 32ms
+ GET / 200 in 66ms
+ GET / 200 in 106ms
