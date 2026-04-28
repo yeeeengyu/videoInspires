@@ -1,5 +1,7 @@
 # vLLM RAG Chat
 
+<img width="260" height="260" alt="image" src="https://github.com/user-attachments/assets/5695cbd3-6475-4342-8a6e-7543ed2e5445" />
+<br>
 로컬 vLLM 서버를 OpenAI 호환 API로 연결해 사용하는 RAG 채팅 웹앱입니다.  
 FastAPI 백엔드가 vLLM에 채팅/임베딩 요청을 보내고, FAISS 벡터 DB에 문서를 저장한 뒤, Next.js 프론트엔드에서 SSE 스트리밍으로 답변을 실시간 표시합니다.
 
@@ -14,6 +16,14 @@ FastAPI 백엔드가 vLLM에 채팅/임베딩 요청을 보내고, FAISS 벡터 
 - 검색된 RAG 컨텍스트 표시
 - Markdown 답변 렌더링
 - Next.js + Tailwind CSS 프론트엔드
+
+## 프로젝트 사진
+
+<img width="700" height="523" alt="image" src="https://github.com/user-attachments/assets/879da1d8-048c-479b-bb0d-df16d7d19589" />
+
+<br>
+
+<img width="520" height="522" alt="image" src="https://github.com/user-attachments/assets/d0809103-a767-4802-9957-5f847df100a7" />
 
 ## 기술 스택
 
