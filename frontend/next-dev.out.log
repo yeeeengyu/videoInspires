@@ -20,3 +20,10 @@
  GET / 200 in 32ms
  GET / 200 in 66ms
  GET / 200 in 106ms
+ ✓ Compiled /_not-found in 476ms (578 modules)
+ GET / 200 in 259ms
+ GET / 404 in 875ms
+ GET / 200 in 63ms
+ GET / 200 in 59ms
+ GET / 200 in 63ms
+ GET / 200 in 71ms
