@@ -1,4 +1,4 @@
-# vLLM RAG Chat
+# vLLM기반 유튜브 시나리오 생성기
 
 <img width="260" height="260" alt="image" src="https://github.com/user-attachments/assets/5695cbd3-6475-4342-8a6e-7543ed2e5445" />
 
@@ -51,6 +51,18 @@ FastAPI 백엔드가 vLLM에 채팅/임베딩 요청을 보내고, FAISS 벡터 
 - `/v1/chat/completions`
 - `/v1/embeddings`
 
+### vLLM 선택 이유
+같은 환경에서 구동하였을 때, 모델 파라미터 수에 따라 VRAM 점유도에 차이가 있었습니다.
+- Ollama
+  - Qwen2.5-7B-Instruct모델 구동 시 **16GB VRAM 중 12GB 점유**
+
+- vLLM
+  - 동일모델 구동 시 **OOM 충돌**
+  - vLLM으로 진행 시 4bit Quantization 모델 사용해야 함
+    - 이에도 16GB 중 15.5GB 점유하여 효율이 안 좋음
+
+이 이유들로는 **굳이 vLLM을 사용할 이유가 없어**보이지만, <br>
+양자화 된 모델과 기본모델의 성능이 체감되는지 테스트해보고 싶어 사용하였습니다.
 ## 폴더 구조
 
 ```text
