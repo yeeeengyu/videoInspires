@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     faiss_path: str = Field(default="./faiss_db", alias="FAISS_PATH")
     rag_top_k: int = Field(default=4, alias="RAG_TOP_K")
     cors_origins: str = Field(
-        default="http://localhost:3000,http://127.0.0.1:3000",
+        default="http://localhost:3000,http://127.0.0.1:3000,https://video-inspires.vercel.app",
         alias="CORS_ORIGINS",
     )
 
