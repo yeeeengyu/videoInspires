@@ -101,7 +101,12 @@ class RagStore:
                 }
             )
 
-        existing = [item for item in self.metadata if item.get("document_id") != document_hash]
+        embedding_size = len(embeddings[0])
+        existing = [
+            item
+            for item in self.metadata
+            if item.get("document_id") != document_hash and len(item.get("embedding", [])) == embedding_size
+        ]
         existing_embeddings = [item["embedding"] for item in existing]
         for item, embedding in zip(new_metadata, embeddings, strict=True):
             item["embedding"] = embedding

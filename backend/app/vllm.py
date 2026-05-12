@@ -1,11 +1,17 @@
 from collections.abc import AsyncIterator
+import hashlib
 import json
+import math
+import re
 from typing import Any
 
 import httpx
 
 from .config import Settings
 from .schemas import ChatMessage
+
+
+LOCAL_EMBEDDING_DIMENSIONS = 512
 
 
 class VllmClient:
@@ -47,9 +53,6 @@ class VllmClient:
         return data
 
     async def _resolve_model(self, configured_model: str) -> str:
-        if configured_model:
-            return configured_model
-
         async with httpx.AsyncClient(timeout=10, headers=self.headers) as client:
             response = await client.get(f"{self.base_url}/models")
             data = await self._json_response(response)
@@ -60,6 +63,19 @@ class VllmClient:
         model_id = models[0].get("id")
         if not model_id:
             raise RuntimeError("vLLM model entry did not include an id.")
+
+        if configured_model:
+            configured_model = configured_model.strip()
+            model_ids = [model.get("id") for model in models if model.get("id")]
+            if configured_model in model_ids:
+                return configured_model
+            if len(model_ids) == 1:
+                return model_id
+            raise RuntimeError(
+                f"Configured vLLM model `{configured_model}` is not available. "
+                f"Available models: {', '.join(model_ids)}"
+            )
+
         return model_id
 
     async def chat_model(self) -> str:
@@ -67,10 +83,37 @@ class VllmClient:
 
     async def embed_model(self) -> str:
         if not self.settings.vllm_embed_model:
-            raise RuntimeError("VLLM_EMBED_MODEL is not configured. RAG requires a separate embedding model endpoint.")
+            return "local-hash-embedding"
         return await self._resolve_model(self.settings.vllm_embed_model)
 
+    def _local_embed(self, text: str) -> list[float]:
+        tokens = re.findall(r"[0-9A-Za-z가-힣]+", text.lower())
+        features: list[str] = []
+
+        for token in tokens:
+            features.append(token)
+            if len(token) >= 3:
+                features.extend(token[index : index + 3] for index in range(len(token) - 2))
+
+        if not features:
+            features = [text.strip() or "empty"]
+
+        vector = [0.0] * LOCAL_EMBEDDING_DIMENSIONS
+        for feature in features:
+            digest = hashlib.blake2b(feature.encode("utf-8"), digest_size=8).digest()
+            bucket = int.from_bytes(digest[:4], "big") % LOCAL_EMBEDDING_DIMENSIONS
+            sign = 1.0 if digest[4] % 2 == 0 else -1.0
+            vector[bucket] += sign
+
+        norm = math.sqrt(sum(value * value for value in vector))
+        if not norm:
+            return vector
+        return [value / norm for value in vector]
+
     async def embed(self, text: str) -> list[float]:
+        if not self.settings.vllm_embed_model:
+            return self._local_embed(text)
+
         payload = {"model": await self.embed_model(), "input": text}
         async with httpx.AsyncClient(timeout=60, headers=self.headers) as client:
             response = await client.post(f"{self.base_url}/embeddings", json=payload)
@@ -78,10 +121,7 @@ class VllmClient:
                 data = await self._json_response(response)
             except httpx.HTTPStatusError as exc:
                 if exc.response.status_code == 404:
-                    raise RuntimeError(
-                        f"vLLM embeddings endpoint was not found at {self.base_url}/embeddings. "
-                        "Start vLLM with an embedding model, or leave RAG disabled."
-                    ) from exc
+                    return self._local_embed(text)
                 raise
 
         embedding = data.get("data", [{}])[0].get("embedding")
