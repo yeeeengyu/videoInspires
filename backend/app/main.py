@@ -14,6 +14,7 @@ from .vllm import VllmClient
 
 
 app = FastAPI(title="vLLM RAG API", version="0.2.0")
+settings = get_settings()
 
 
 def get_vllm(settings: Settings = Depends(get_settings)) -> VllmClient:
@@ -25,16 +26,6 @@ def get_rag(
     vllm: VllmClient = Depends(get_vllm),
 ) -> RagStore:
     return RagStore(settings, vllm)
-
-
-settings = get_settings()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origin_list,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 def sse(event: str, data: object) -> str:
@@ -162,3 +153,12 @@ async def chat_stream(
             yield sse("error", {"message": str(exc)})
 
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+app = CORSMiddleware(
+    app=app,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
