@@ -8,11 +8,11 @@ class Settings(BaseSettings):
     vllm_base_url: str = Field(default="http://127.0.0.1:8080/v1", alias="VLLM_BASE_URL")
     vllm_api_key: str = Field(default="", alias="VLLM_API_KEY")
     vllm_chat_model: str = Field(default="Qwen/Qwen2.5-7B-Instruct", alias="VLLM_CHAT_MODEL")
-    vllm_embed_model: str = Field(default="Qwen/Qwen2.5-7B-Instruct", alias="VLLM_EMBED_MODEL")
+    vllm_embed_model: str = Field(default="", alias="VLLM_EMBED_MODEL")
     faiss_path: str = Field(default="./faiss_db", alias="FAISS_PATH")
     rag_top_k: int = Field(default=4, alias="RAG_TOP_K")
     cors_origins: str = Field(
-        default="http://localhost:3000,http://127.0.0.1:3000,https://video-inspires.vercel.app",
+        default="https://video-inspires.vercel.app,http://localhost:3000,http://127.0.0.1:3000",
         alias="CORS_ORIGINS",
     )
 

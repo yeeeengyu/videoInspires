@@ -86,12 +86,17 @@ def build_chat_messages(messages: list[ChatMessage], chunks: list[RetrievedChunk
 
 @app.get("/health")
 async def health(vllm: VllmClient = Depends(get_vllm)) -> dict[str, str]:
+    try:
+        embed_model = await vllm.embed_model()
+    except Exception as exc:
+        embed_model = f"unavailable: {exc}"
+
     return {
         "status": "ok",
         "provider": "vllm",
         "base_url": vllm.base_url,
         "chat_model": await vllm.chat_model(),
-        "embed_model": await vllm.embed_model(),
+        "embed_model": embed_model,
     }
 
 
@@ -131,7 +136,10 @@ async def chat_stream(
 
         try:
             if payload.use_rag and latest_user_message:
-                chunks = await rag.search(latest_user_message, payload.top_k or settings.rag_top_k)
+                try:
+                    chunks = await rag.search(latest_user_message, payload.top_k or settings.rag_top_k)
+                except Exception as exc:
+                    yield sse("warning", {"message": f"RAG search skipped: {exc}"})
             yield sse(
                 "context",
                 [
