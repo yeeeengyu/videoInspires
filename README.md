@@ -86,7 +86,7 @@ FastAPI 백엔드가 vLLM에 채팅/임베딩 요청을 보내고, FAISS 벡터 
 | 파라미터 | 7B | 7B |
 | 추론 엔진 | Ollama | Ollama |
 | Context Window | 4,096 | 4,096 |
-| 모델 로딩 직후 총 VRAM | 약 15GB | 약 15.5GB |
+| 모델 로딩 직후 총 VRAM | 약 15GB | 약 9.5GB |
 | 순수 모델 점유량 | 약 14GB | 약 7GB |
 | 추론 시 Peak VRAM | 약 15.9GB | 약 15.9GB |
 | TTFT | 0.3 ~ 1.0초 | 0.5 ~ 1.0초 |
